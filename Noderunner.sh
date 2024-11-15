@@ -78,14 +78,15 @@ kupo () {
 		-v kupo-db:/db \
 		-v cardano-node-ipc:/ipc \
 		-v cardano-node-config:/config \
-		cardanosolutions/kupo:latest \
+		cardanosolutions/kupo:v2.7.2 \
 			--node-socket /ipc/node.socket \
 			--node-config /config/cardano-node/config.json \
 			--host 0.0.0.0 \
 			--workdir /db \
 			--prune-utxo \
 			--since 16588737.4e9bbbb67e3ae262133d94c3da5bffce7b1127fc436e7433b87668dba34c354a \
-			--match "*/*"
+			--match "*/*" \
+			--defer-db-indexes
 	echo
 	echo "you can run 'docker ps -a' to show all running and stopped containers and 'docker logs <container name> will give you all the logs of a container if one stopped for whatever reason."
 }

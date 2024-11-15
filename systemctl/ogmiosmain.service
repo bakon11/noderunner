@@ -9,7 +9,7 @@ Type            = simple
 ExecStart= ogmios \
       	--node-socket /home/bakon/.cardano/mainnet/socket/node.socket \
       	--node-config /home/bakon/.cardano/mainnet/files/mainnet-config.json \
-	--host 0.0.0.0 \
+				--host 0.0.0.0 \
         --port 4200
 KillSignal=SIGINT
 RestartKillSignal=SIGINT
