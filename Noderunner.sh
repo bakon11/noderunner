@@ -3,12 +3,12 @@
 welcome () {
 	echo "WELCOME TO"
 	echo "#     # ####### ######  ####### ######  #     # #     # #     # ####### ######  
-##    # #     # #     # #       #     # #     # ##    # ##    # #       #     # 
-# #   # #     # #     # #       #     # #     # # #   # # #   # #       #     # 
-#  #  # #     # #     # #####   ######  #     # #  #  # #  #  # #####   ######  
-#   # # #     # #     # #       #   #   #     # #   # # #   # # #       #   #   
-#    ## #     # #     # #       #    #  #     # #    ## #    ## #       #    #  
-#     # ####### ######  ####### #     #  #####  #     # #     # ####### #     # "
+				##    # #     # #     # #       #     # #     # ##    # ##    # #       #     # 
+				# #   # #     # #     # #       #     # #     # # #   # # #   # #       #     # 
+				#  #  # #     # #     # #####   ######  #     # #  #  # #  #  # #####   ######  
+				#   # # #     # #     # #       #   #   #     # #   # # #   # # #       #   #   
+				#    ## #     # #     # #       #    #  #     # #    ## #    ## #       #    #  
+				#     # ####### ######  ####### #     #  #####  #     # #     # ####### #     # "
 	echo "Your Cardano Stack Helper."
 	echo "Please visit https://github.com/onchainapps/noderunner for more information."
 	echo
@@ -19,41 +19,44 @@ welcome () {
 menu () {
 	echo "#########MENU#########"
 	echo 
-	echo "A: Build Cardano Node with Ogmios Docker images."
-	echo "B: Build Kupo Docker image."
-	echo "C: Build and Run Postgresql for carp Indexer."
-	echo "D: Build Carp Indexer (Only indexs CIP25 metadata with label 721) Docker image."
-	echo "E: Build Carp Webserver Docker image that will allow you to query NFT metadata, example is shown after the setup is complete."
-	echo "F: Setup Docker for Debian."
-	echo "G: Prune unused Docker images, this on average can free up 10GB of HD space. These are images that were used when the different services were building from source."
-	echo "H: Setup IPFS Docker contianer. https://docs.ipfs.tech/how-to/run-ipfs-inside-docker/#set-up"
+	echo "A: Run Cardano Node with Ogmios Mainnet Docker."
+	echo "B: Run Cardano Node with Ogmios PreProd Docker."
+	echo "C: Run Kupo Docker image."
+	echo "D: Build and Run Postgresql for carp Indexer."
+	echo "E: Build Carp Indexer (Only indexs CIP25 metadata with label 721) Docker image."
+	echo "F: Build Carp Webserver Docker image that will allow you to query NFT metadata, example is shown after the setup is complete."
+	echo "G: Setup Docker for Debian."
+	echo "H: Prune unused Docker images, this on average can free up 10GB of HD space. These are images that were used when the different services were building from source."
+	echo "I: Setup IPFS Docker contianer. https://docs.ipfs.tech/how-to/run-ipfs-inside-docker/#set-up"
 	echo
 	read menuItem
 
 	if [ $menuItem == "A" ] || [ $menuItem == "a" ]; then
-		ogmios
+		node-ogmios-mainnet
 	elif [ $menuItem == "B" ] || [ $menuItem == "b" ]; then
-		kupo
+		node-ogmios-preprod
 	elif [ $menuItem == "C" ] || [ $menuItem == "c" ]; then
-		postgresql
+		kupo
 	elif [ $menuItem == "D" ] || [ $menuItem == "d" ]; then
-		carp-indexer
+		postgresql
 	elif [ $menuItem == "E" ] || [ $menuItem == "e" ]; then
-		carp-webserver
+		carp-indexer
 	elif [ $menuItem == "F" ] || [ $menuItem == "f" ]; then
-		installDockerDebian
+		carp-webserver
 	elif [ $menuItem == "G" ] || [ $menuItem == "g" ]; then
+		installDockerDebian
+	elif [ $menuItem == "H" ] || [ $menuItem == "h" ]; then
 		dockerPruneImages
-	elif [ $menuItem == "H " ] || [ $menuItem == "h" ]; then
-		ipfs
+	elif [ $menuItem == "I" ] || [ $menuItem == "i" ]; then
+		ipfs		
 	else
 		menu
 	fi
 }
 
-ogmios () {
+node-ogmios-mainnet () {
 	echo
-	echo "Spinning up Cardano Node and ogmios docker container."
+	echo "Spinning up Cardano Node and ogmios docker container for Cardano Mainnet."
 	echo
 	docker run -itd \
 		--restart=always \
@@ -63,6 +66,23 @@ ogmios () {
 		-v cardano-node-ipc:/ipc \
 		-v cardano-node-config:/config \
 		cardanosolutions/cardano-node-ogmios:latest
+	echo
+	echo "you can run 'docker ps -a' to show all running and stopped containers and 'docker logs <container name> will give you all the logs of a container if one stopped for whatever reason."
+}
+
+node-ogmios-preprod () {
+	echo
+	echo "Spinning up Cardano Node and ogmios docker container for Cardano PreProd."
+	echo
+	docker run -itd \
+		--restart=always \
+		--name cardano-node-ogmios \
+		-p 1337:1337 \
+		-v cardano-node-db:/db \
+		-v cardano-node-ipc:/ipc \
+		-v cardano-node-config:/config \
+		cardanosolutions/cardano-node-ogmios:latest-preprod
+
 	echo
 	echo "you can run 'docker ps -a' to show all running and stopped containers and 'docker logs <container name> will give you all the logs of a container if one stopped for whatever reason."
 }
@@ -100,7 +120,7 @@ postgresql () {
 
 carp-indexer () {
 	echo
-	echo "Spinning up Carp indexer for CIP-25 metadata."
+	echo "Spinning up Carp indexer for CIP-25 `metadata."
 	echo
 	if [ ! -d "./carp" ]
 	then
