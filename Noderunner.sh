@@ -120,7 +120,7 @@ postgresql () {
 
 carp-indexer () {
 	echo
-	echo "Spinning up Carp indexer for CIP-25 `metadata."
+	echo "Spinning up Carp indexer for CIP-25 metadata."
 	echo
 	if [ ! -d "./carp" ]
 	then
