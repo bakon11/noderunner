@@ -125,7 +125,7 @@ kupo-preprod () {
 		-v kupo-preprod-db:/db \
 		-v cardano-node-preprod-ipc:/ipc \
 		-v cardano-node-preprod-config:/config \
-		cardanosolutions/kupo:latest-preprod \
+		cardanosolutions/kupo:latest \
 			--node-socket /ipc/node.socket \
 			--node-config /config/cardano-node/config.json \
 			--host 0.0.0.0 \
