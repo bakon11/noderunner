@@ -21,13 +21,14 @@ menu () {
 	echo 
 	echo "A: Run Cardano Node with Ogmios Mainnet Docker."
 	echo "B: Run Cardano Node with Ogmios PreProd Docker."
-	echo "C: Run Kupo Docker image."
-	echo "D: Build and Run Postgresql for carp Indexer."
-	echo "E: Build Carp Indexer (Only indexs CIP25 metadata with label 721) Docker image."
-	echo "F: Build Carp Webserver Docker image that will allow you to query NFT metadata, example is shown after the setup is complete."
-	echo "G: Setup Docker for Debian."
-	echo "H: Prune unused Docker images, this on average can free up 10GB of HD space. These are images that were used when the different services were building from source."
-	echo "I: Setup IPFS Docker contianer. https://docs.ipfs.tech/how-to/run-ipfs-inside-docker/#set-up"
+	echo "C: Run Kupo Mainnet Docker."
+	echo "D: Run Kupo Preprod Docker."
+	echo "E: Run Postgresql for carp Indexer."
+	echo "F: Build Carp Indexer (Only indexs CIP25 metadata with label 721) Docker image."
+	echo "G: Build Carp Webserver Docker image that will allow you to query NFT metadata, example is shown after the setup is complete."
+	echo "H: Setup Docker for Debian."
+	echo "I: Prune unused Docker images, this on average can free up 10GB of HD space. These are images that were used when the different services were building from source."
+	echo "J: Setup IPFS Docker contianer. https://docs.ipfs.tech/how-to/run-ipfs-inside-docker/#set-up"
 	echo
 	read menuItem
 
@@ -38,16 +39,18 @@ menu () {
 	elif [ $menuItem == "C" ] || [ $menuItem == "c" ]; then
 		kupo
 	elif [ $menuItem == "D" ] || [ $menuItem == "d" ]; then
+		kupo-preprod
+	elif [ $menuItem == "E" ] || [ $menuItem == "e" ]; then		
 		postgresql
-	elif [ $menuItem == "E" ] || [ $menuItem == "e" ]; then
-		carp-indexer
 	elif [ $menuItem == "F" ] || [ $menuItem == "f" ]; then
-		carp-webserver
+		carp-indexer
 	elif [ $menuItem == "G" ] || [ $menuItem == "g" ]; then
-		installDockerDebian
+		carp-webserver
 	elif [ $menuItem == "H" ] || [ $menuItem == "h" ]; then
-		dockerPruneImages
+		installDockerDebian
 	elif [ $menuItem == "I" ] || [ $menuItem == "i" ]; then
+		dockerPruneImages
+	elif [ $menuItem == "J" ] || [ $menuItem == "j" ]; then
 		ipfs		
 	else
 		menu
@@ -76,7 +79,7 @@ node-ogmios-preprod () {
 	echo
 	docker run -itd \
 		--restart=always \
-		--name cardano-node-preprod-ogmios \
+		--name cardano-node-ogmios-preprod \
 		-p 1337:1337 \
 		-v cardano-node-preprod-db:/db \
 		-v cardano-node-preprod-ipc:/ipc \
@@ -98,13 +101,37 @@ kupo () {
 		-v kupo-db:/db \
 		-v cardano-node-ipc:/ipc \
 		-v cardano-node-config:/config \
-		cardanosolutions/kupo:v2.7.2 \
+		cardanosolutions/kupo:latest \
 			--node-socket /ipc/node.socket \
 			--node-config /config/cardano-node/config.json \
 			--host 0.0.0.0 \
 			--workdir /db \
 			--prune-utxo \
 			--since 16588737.4e9bbbb67e3ae262133d94c3da5bffce7b1127fc436e7433b87668dba34c354a \
+			--match "*/*" \
+			--defer-db-indexes
+	echo
+	echo "you can run 'docker ps -a' to show all running and stopped containers and 'docker logs <container name> will give you all the logs of a container if one stopped for whatever reason."
+}
+
+kupo-preprod () {
+	echo
+	echo "Spinning up KUPO docker container for Cardano PreProd."
+	echo
+	docker run -itd \
+		--restart=always \
+		--name kupo-preprod \
+		-p 0.0.0.0:1442:1442 \
+		-v kupo-preprod-db:/db \
+		-v cardano-node-preprod-ipc:/ipc \
+		-v cardano-node-preprod-config:/config \
+		cardanosolutions/kupo:latest-preprod \
+			--node-socket /ipc/node.socket \
+			--node-config /config/cardano-node/config.json \
+			--host 0.0.0.0 \
+			--workdir /db \
+			--prune-utxo \
+			--since 518360.f9d8b6c77fedd60c3caf5de0ce63a0aeb9d1753269c9c07503d9aa09d5144481 \
 			--match "*/*" \
 			--defer-db-indexes
 	echo
