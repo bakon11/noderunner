@@ -76,11 +76,11 @@ node-ogmios-preprod () {
 	echo
 	docker run -itd \
 		--restart=always \
-		--name cardano-node-ogmios \
+		--name cardano-node-preprod-ogmios \
 		-p 1337:1337 \
-		-v cardano-node-db:/db \
-		-v cardano-node-ipc:/ipc \
-		-v cardano-node-config:/config \
+		-v cardano-node-preprod-db:/db \
+		-v cardano-node-preprod-ipc:/ipc \
+		-v cardano-node-preprod-config:/config \
 		cardanosolutions/cardano-node-ogmios:latest-preprod
 
 	echo
